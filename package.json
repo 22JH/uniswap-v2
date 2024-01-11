@@ -1,0 +1,33 @@
+{
+  "name": "uniswapv2",
+  "version": "0.0.1",
+  "description": "메셔 프론트엔드 과제",
+  "main": "index.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --config webpack.dev.js --open --hot",
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack serve --config webpack.dev.js"
+  },
+  "author": "22JH <toitoii080@gmail.coim>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "webpack-merge": "^5.10.0"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.3"
+  }
+}

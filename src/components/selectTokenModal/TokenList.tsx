@@ -7,7 +7,24 @@ import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import { TokenType } from "types/Token.type";
 
-export default function TokenList() {
+interface TokenListProps {
+  searchedToken: TokenType[];
+}
+
+const tokenListContainer = css`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+`;
+
+const tokenCard = css`
+  border: 1px solid black;
+  &:hover {
+    background-color: grey;
+  }
+`;
+
+export default function TokenList({ searchedToken }: TokenListProps) {
   const observeTarget = useRef<HTMLDivElement | null>(null);
 
   const [observe, unobserve] = useIntersectionObserver(() => {
@@ -23,17 +40,14 @@ export default function TokenList() {
         return lastPage.data?.length === 0 ? undefined : nextPage;
       },
       select: (data) => ({
-        pages: data.pages,
-        pageParams: data.pageParams,
+        pages: data?.pages,
+        pageParams: data?.pageParams,
       }),
-      onSuccess: (res) => console.log(res),
-      refetchInterval: 30000, // 10 seconds,
       refetchOnWindowFocus: false,
       retry: false,
+      enabled: !searchedToken,
     }
   );
-  console.log(data?.pages, hasNextPage);
-  console.log(1);
 
   useEffect(() => {
     if (hasNextPage && observeTarget.current) {
@@ -43,17 +57,26 @@ export default function TokenList() {
     }
   }, [hasNextPage, observe, unobserve, data]);
 
-  return (
-    <div>
-      {data?.pages &&
-        data.pages.map((page, i) => (
-          <div key={i}>
-            {page.data.map((token: TokenType) => (
-              <div key={token.id}>{token.name}</div>
-            ))}
-          </div>
-        ))}
-      <div ref={observeTarget} />
-    </div>
-  );
+  if (searchedToken) {
+    return (
+      <div css={tokenListContainer}>
+        {searchedToken?.map((token: TokenType) => {
+          return <div key={`${token.id}`}>{token.symbol}</div>;
+        })}
+        <div ref={observeTarget} />
+      </div>
+    );
+  } else {
+    return (
+      <div css={tokenListContainer}>
+        {data?.pages &&
+          data?.pages.map((page: TokenType[], pageIndex: number) => {
+            return page.map((token: TokenType) => {
+              return <div key={`${token.id}_${pageIndex}`}>{token.symbol}</div>;
+            });
+          })}
+        <div ref={observeTarget} />
+      </div>
+    );
+  }
 }

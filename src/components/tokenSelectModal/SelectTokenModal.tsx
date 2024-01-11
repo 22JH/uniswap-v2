@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+
 import { useState } from "react";
+import TokenList from "./TokenList";
 
 const selectTokenModalContainer = css`
   width: 35vw;
@@ -23,7 +25,6 @@ const tokenList = css``;
 
 export default function SelectTokenModal() {
   const [searchToken, setSearchText] = useState<string>("");
-
   return (
     <div css={selectTokenModalContainer}>
       <div css={modalHeader}>
@@ -34,7 +35,9 @@ export default function SelectTokenModal() {
         <input type="text" onChange={(e) => setSearchText(e.target.value)} />
       </div>
       <div css={recentSearch}></div>
-      <div css={tokenList}></div>
+      <div css={tokenList}>
+        <TokenList />
+      </div>
     </div>
   );
 }

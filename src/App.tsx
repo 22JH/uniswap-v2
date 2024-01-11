@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import TokenInput from "./components/TokenInput";
-import SelectTokenModal from "./components/SelectTokenModal";
+import SelectTokenModal from "./components/tokenSelectModal/SelectTokenModal";
 
 const uniswapContainer = css`
   display: flex;

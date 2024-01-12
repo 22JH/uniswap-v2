@@ -7,6 +7,7 @@ import { ValueType } from "types/Value.type";
 import { useQuery } from "react-query";
 import { getTokenPrice } from "../../api/getTokenPrice";
 import { getSearchedToken } from "../../api/getSearchedToken";
+import useDebounce from "../../hooks/useDebounce";
 
 const selectTokenModalContainer = css`
   position: absolute;
@@ -40,14 +41,15 @@ export default function SelectTokenModal({
   setValue,
 }: SelectTokenModalProps) {
   const [searchToken, setSearchText] = useState<string>("");
+  const debouncedSearchTerm = useDebounce(searchToken, 500);
 
   const { data } = useQuery(["search-token", searchToken], getSearchedToken, {
     staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 60 * 24,
     refetchOnWindowFocus: false,
-    enabled: !!searchToken,
+    enabled: !!(searchToken && debouncedSearchTerm),
   });
-  console.log(data);
+
   return (
     <div css={selectTokenModalContainer}>
       <div css={modalHeader}>
@@ -58,7 +60,11 @@ export default function SelectTokenModal({
         <input type="text" onChange={(e) => setSearchText(e.target.value)} />
       </div>
       <div css={recentSearch}></div>
-      <TokenList searchedToken={data?.coins} />
+      <TokenList
+        searchedToken={data?.coins}
+        setValue={setValue}
+        setModalClicked={setModalClicked}
+      />
     </div>
   );
 }

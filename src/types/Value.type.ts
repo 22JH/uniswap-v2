@@ -1,4 +1,6 @@
 export interface ValueType {
-  amount: number;
-  selectedToken: string;
+  amount: number | null;
+  tokenSymbol: string;
+  tokenId: string;
+  perDollar: number | null;
 }

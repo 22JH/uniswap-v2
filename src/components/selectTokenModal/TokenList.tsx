@@ -6,10 +6,7 @@ import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import { TokenType } from "types/Token.type";
-
-interface TokenListProps {
-  searchedToken: TokenType[];
-}
+import { ValueType } from "types/Value.type";
 
 const tokenListContainer = css`
   display: flex;
@@ -24,7 +21,17 @@ const tokenCard = css`
   }
 `;
 
-export default function TokenList({ searchedToken }: TokenListProps) {
+interface TokenListProps {
+  searchedToken: TokenType[];
+  setValue: React.Dispatch<React.SetStateAction<ValueType>>;
+  setModalClicked: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function TokenList({
+  searchedToken,
+  setValue,
+  setModalClicked,
+}: TokenListProps) {
   const observeTarget = useRef<HTMLDivElement | null>(null);
 
   const [observe, unobserve] = useIntersectionObserver(() => {
@@ -57,11 +64,22 @@ export default function TokenList({ searchedToken }: TokenListProps) {
     }
   }, [hasNextPage, observe, unobserve, data]);
 
+  const handleTokenCliked = (tokenSymbol: string, tokenId: string) => {
+    setValue((prev) => ({ ...prev, tokenSymbol, tokenId }));
+    setModalClicked(false);
+  };
+
   if (searchedToken) {
     return (
       <div css={tokenListContainer}>
         {searchedToken?.map((token: TokenType) => {
-          return <div key={`${token.id}`}>{token.symbol}</div>;
+          return (
+            <div
+              key={`${token.id}`}
+              onClick={() => handleTokenCliked(token.symbol, token.id)}>
+              {token.symbol}
+            </div>
+          );
         })}
         <div ref={observeTarget} />
       </div>
@@ -72,7 +90,13 @@ export default function TokenList({ searchedToken }: TokenListProps) {
         {data?.pages &&
           data?.pages.map((page: TokenType[], pageIndex: number) => {
             return page.map((token: TokenType) => {
-              return <div key={`${token.id}_${pageIndex}`}>{token.symbol}</div>;
+              return (
+                <div
+                  key={`${token.id}_${pageIndex}`}
+                  onClick={() => handleTokenCliked(token.symbol, token.id)}>
+                  {token.symbol}
+                </div>
+              );
             });
           })}
         <div ref={observeTarget} />

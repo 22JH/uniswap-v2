@@ -1,7 +1,13 @@
-import { useEffect, useState } from "react";
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
+import { useState } from "react";
 import { ValueType } from "types/Value.type";
-import SelectTokenModal from "./selectTokenModal/SelectTokenModal";
-import { transDivideDecimal, transMultiplyDecimal } from "../util/transDecimal";
+import SelectTokenModal from "../../selectTokenModal/SelectTokenModal";
+import {
+  transDivideDecimal,
+  transMultiplyDecimal,
+} from "../../../util/transDecimal";
+import { TokenInputContainer } from "./TokenInput.css";
 
 interface TokenInputProps {
   value: ValueType;
@@ -38,22 +44,25 @@ export default function TokenInput({
 
   return (
     <>
-      <div>
-        <input
-          type="number"
-          placeholder="0.0"
-          value={value.amount || ""}
-          onChange={(e) => handleAmount(e)}
-        />
-        <button onClick={() => setModalClicked((prev) => !prev)}>
-          {value.tokenSymbol}
-        </button>
-        <p>${transToDollar}</p>
+      <div css={TokenInputContainer}>
+        <div className="inputButtonWrap">
+          <input
+            type="number"
+            placeholder="0.0"
+            value={value.amount || ""}
+            onChange={(e) => handleAmount(e)}
+            min="0"></input>
+          <button onClick={() => setModalClicked(() => true)}>
+            {value.tokenSymbol}
+          </button>
+        </div>
+        <p>{value.amount && `$${transToDollar}`}</p>
       </div>
       {modalClicked && (
         <SelectTokenModal
           setModalClicked={setModalClicked}
           setValue={setValue}
+          value={value}
         />
       )}
     </>

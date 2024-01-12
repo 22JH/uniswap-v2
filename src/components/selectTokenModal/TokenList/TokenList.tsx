@@ -1,36 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { tokenListContainer } from "./TokenList.css";
 
-import { getTokens } from "../../api/getTokens";
-import useIntersectionObserver from "../../hooks/useIntersectionObserver";
+import { getTokens } from "../../../api/getTokens";
+import useIntersectionObserver from "../../../hooks/useIntersectionObserver";
 import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "react-query";
 import { TokenType } from "types/Token.type";
 import { ValueType } from "types/Value.type";
 
-const tokenListContainer = css`
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-`;
-
-const tokenCard = css`
-  border: 1px solid black;
-  &:hover {
-    background-color: grey;
-  }
-`;
-
 interface TokenListProps {
   searchedToken: TokenType[];
   setValue: React.Dispatch<React.SetStateAction<ValueType>>;
   setModalClicked: React.Dispatch<React.SetStateAction<boolean>>;
+  value: ValueType;
 }
 
 export default function TokenList({
   searchedToken,
   setValue,
   setModalClicked,
+  value,
 }: TokenListProps) {
   const observeTarget = useRef<HTMLDivElement | null>(null);
 
@@ -65,7 +55,15 @@ export default function TokenList({
   }, [hasNextPage, observe, unobserve, data]);
 
   const handleTokenCliked = (tokenSymbol: string, tokenId: string) => {
+    if (value.tokenId === tokenId) return;
+
     setValue((prev) => ({ ...prev, tokenSymbol, tokenId }));
+
+    const _searched: string[] = JSON.parse(
+      localStorage.getItem("recentSearched") || "[]"
+    );
+    const _newSearched = [{ tokenSymbol, tokenId }, ..._searched];
+    localStorage.setItem("recentSearched", JSON.stringify(_newSearched));
     setModalClicked(false);
   };
 
@@ -76,8 +74,10 @@ export default function TokenList({
           return (
             <div
               key={`${token.id}`}
-              onClick={() => handleTokenCliked(token.symbol, token.id)}>
-              {token.symbol}
+              onClick={() => handleTokenCliked(token.symbol, token.id)}
+              className="tokenCard">
+              <p className="tokenSymbol">{token.symbol}</p>
+              <p className="tokenName">{token.name}</p>
             </div>
           );
         })}
@@ -93,8 +93,10 @@ export default function TokenList({
               return (
                 <div
                   key={`${token.id}_${pageIndex}`}
-                  onClick={() => handleTokenCliked(token.symbol, token.id)}>
-                  {token.symbol}
+                  onClick={() => handleTokenCliked(token.symbol, token.id)}
+                  className="tokenCard">
+                  <p className="tokenSymbol">{token.symbol}</p>
+                  <p className="tokenName">{token.name}</p>
                 </div>
               );
             });

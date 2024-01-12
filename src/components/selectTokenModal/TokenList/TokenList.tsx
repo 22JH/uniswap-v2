@@ -31,7 +31,7 @@ export default function TokenList({
   const [observe, unobserve] = useIntersectionObserver(() => {
     fetchNextPage();
   });
-  const { data, fetchNextPage, hasNextPage, isLoading, isError } =
+  const { data, fetchNextPage, hasNextPage, isFetching, isError } =
     useInfiniteQuery(
       ["get-tokens"],
       ({ pageParam = 1 }) => getTokens(pageParam),
@@ -68,7 +68,7 @@ export default function TokenList({
     const _searched: string[] = JSON.parse(
       localStorage.getItem("recentSearched") || "[]"
     );
-    const _newSearched = [{ tokenSymbol, tokenId }, ..._searched].slice(0, 6);
+    const _newSearched = [{ tokenSymbol, tokenId }, ..._searched].slice(0, 7);
     localStorage.setItem("recentSearched", JSON.stringify(_newSearched));
     setModalClicked(false);
   };
@@ -118,7 +118,7 @@ export default function TokenList({
               );
             });
           })}
-        {isLoading && (
+        {isFetching && (
           <button className="tokenCard" disabled={true}>
             <p className="tokenSymbol">토큰을 불러오는 중 입니다</p>
           </button>

@@ -22,7 +22,7 @@ export default function RecentSearched({
   );
 
   const handleClickedToken = (token: ValueType) => {
-    const _newSearched = [token, ...searched].slice(0, 6);
+    const _newSearched = [token, ...searched].slice(0, 7);
     localStorage.setItem("recentSearched", JSON.stringify(_newSearched));
 
     setValue((prev) => ({

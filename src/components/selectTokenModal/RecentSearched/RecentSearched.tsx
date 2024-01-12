@@ -8,12 +8,14 @@ interface RecentSearch {
   setValue: React.Dispatch<React.SetStateAction<ValueType>>;
   setModalClicked: React.Dispatch<React.SetStateAction<boolean>>;
   value: ValueType;
+  otherValue: ValueType;
 }
 
 export default function RecentSearched({
   setValue,
   setModalClicked,
   value,
+  otherValue,
 }: RecentSearch) {
   const searched: ValueType[] = JSON.parse(
     localStorage.getItem("recentSearched") || "[]"
@@ -39,7 +41,10 @@ export default function RecentSearched({
           return (
             <button
               onClick={() => handleClickedToken(token)}
-              disabled={token.tokenId === value.tokenId}
+              disabled={
+                token.tokenId === value.tokenId ||
+                token.tokenId === otherValue.tokenId
+              }
               key={token.tokenId + index}>
               {token.tokenSymbol}
             </button>

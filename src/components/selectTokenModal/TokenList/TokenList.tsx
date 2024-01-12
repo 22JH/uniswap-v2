@@ -14,6 +14,8 @@ interface TokenListProps {
   setValue: React.Dispatch<React.SetStateAction<ValueType>>;
   setModalClicked: React.Dispatch<React.SetStateAction<boolean>>;
   value: ValueType;
+  otherValue: ValueType;
+  searchLoading: boolean;
 }
 
 export default function TokenList({
@@ -21,30 +23,34 @@ export default function TokenList({
   setValue,
   setModalClicked,
   value,
+  otherValue,
+  searchLoading,
 }: TokenListProps) {
   const observeTarget = useRef<HTMLDivElement | null>(null);
 
   const [observe, unobserve] = useIntersectionObserver(() => {
     fetchNextPage();
   });
-
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ["get-tokens"],
-    ({ pageParam = 1 }) => getTokens(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) => {
-        const nextPage = allPages.length + 1;
-        return lastPage.data?.length === 0 ? undefined : nextPage;
-      },
-      select: (data) => ({
-        pages: data?.pages,
-        pageParams: data?.pageParams,
-      }),
-      refetchOnWindowFocus: false,
-      retry: false,
-      enabled: !searchedToken,
-    }
-  );
+  const { data, fetchNextPage, hasNextPage, isLoading, isError } =
+    useInfiniteQuery(
+      ["get-tokens"],
+      ({ pageParam = 1 }) => getTokens(pageParam),
+      {
+        getNextPageParam: (lastPage, allPages) => {
+          const nextPage = allPages.length + 1;
+          return lastPage.data?.length === 0 ? undefined : nextPage;
+        },
+        select: (data) => ({
+          pages: data?.pages,
+          pageParams: data?.pageParams,
+        }),
+        staleTime: 1000 * 60 * 60,
+        cacheTime: 1000 * 60 * 60 * 24,
+        refetchOnWindowFocus: false,
+        retry: false,
+        enabled: !searchedToken,
+      }
+    );
 
   useEffect(() => {
     if (hasNextPage && observeTarget.current) {
@@ -62,7 +68,7 @@ export default function TokenList({
     const _searched: string[] = JSON.parse(
       localStorage.getItem("recentSearched") || "[]"
     );
-    const _newSearched = [{ tokenSymbol, tokenId }, ..._searched];
+    const _newSearched = [{ tokenSymbol, tokenId }, ..._searched].slice(0, 6);
     localStorage.setItem("recentSearched", JSON.stringify(_newSearched));
     setModalClicked(false);
   };
@@ -70,18 +76,25 @@ export default function TokenList({
   if (searchedToken) {
     return (
       <div css={tokenListContainer}>
+        {searchLoading && (
+          <button className="tokenCard">
+            <p className="tokenSymbol">토큰을 불러오는 중 입니다</p>
+          </button>
+        )}
         {searchedToken?.map((token: TokenType) => {
           return (
-            <div
+            <button
               key={`${token.id}`}
               onClick={() => handleTokenCliked(token.symbol, token.id)}
-              className="tokenCard">
+              className="tokenCard"
+              disabled={
+                token.id === value.tokenId || token.id === otherValue.tokenId
+              }>
               <p className="tokenSymbol">{token.symbol}</p>
               <p className="tokenName">{token.name}</p>
-            </div>
+            </button>
           );
         })}
-        <div ref={observeTarget} />
       </div>
     );
   } else {
@@ -91,17 +104,34 @@ export default function TokenList({
           data?.pages.map((page: TokenType[], pageIndex: number) => {
             return page.map((token: TokenType) => {
               return (
-                <div
+                <button
                   key={`${token.id}_${pageIndex}`}
                   onClick={() => handleTokenCliked(token.symbol, token.id)}
-                  className="tokenCard">
+                  className="tokenCard"
+                  disabled={
+                    token.id === value.tokenId ||
+                    token.id === otherValue.tokenId
+                  }>
                   <p className="tokenSymbol">{token.symbol}</p>
                   <p className="tokenName">{token.name}</p>
-                </div>
+                </button>
               );
             });
           })}
-        <div ref={observeTarget} />
+        {isLoading && (
+          <button className="tokenCard" disabled={true}>
+            <p className="tokenSymbol">토큰을 불러오는 중 입니다</p>
+          </button>
+        )}
+        {isError && (
+          <button className="tokenCard" disabled={true}>
+            <p className="tokenSymbol">
+              API 요청 횟수가 초과했습니다. 1분뒤 다시 시도해 주세요
+            </p>
+          </button>
+        )}
+
+        <div className="target" ref={observeTarget} />
       </div>
     );
   }

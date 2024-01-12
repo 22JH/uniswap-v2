@@ -8,6 +8,10 @@ export const headerContainer = css`
   justify-content: space-between;
   align-items: center;
   flex: 1;
-
+  margin-bottom: 10px;
+  padding: 0 10px;
   color: ${palette.fontColor};
+  svg {
+    cursor: pointer;
+  }
 `;

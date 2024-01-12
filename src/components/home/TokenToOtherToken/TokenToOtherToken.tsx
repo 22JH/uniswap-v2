@@ -15,8 +15,8 @@ export default function TokenToOtherToken({
   outputValue,
 }: TokenToOtherTokenProps) {
   const tokenToOtherToken = transDivideDecimal(
-    inputValue.perDollar!,
-    outputValue.perDollar!
+    outputValue.perDollar!,
+    inputValue.perDollar!
   );
   return (
     <p

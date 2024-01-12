@@ -16,7 +16,10 @@ export default function SwapButton({
   /** 스왑 버튼 활성화 */
   const buttonActive = !(inputValue.amount && outputValue.amount);
   return (
-    <button disabled={buttonActive} css={swapButtonContainer(buttonActive)}>
+    <button
+      disabled={buttonActive}
+      css={swapButtonContainer(buttonActive)}
+      onClick={() => alert("준비 중 입니다")}>
       {buttonActive ? "금액을 입력해 주세요" : "스왑"}
     </button>
   );

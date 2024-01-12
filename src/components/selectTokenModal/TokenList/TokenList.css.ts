@@ -5,12 +5,21 @@ import { css } from "@emotion/react";
 export const tokenListContainer = css`
   display: flex;
   flex-direction: column;
-  padding: 0 15px;
   border-top: 1px solid ${palette.boxSubColor};
   overflow-y: scroll;
-
+  &::-webkit-scrollbar {
+    display: none;
+  }
   .tokenCard {
-    padding: 5px 0 5px 0;
+    padding: 5px 15px;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+
+    &:disabled {
+      background-color: ${palette.boxSubColor};
+      cursor: default;
+    }
     &:hover {
       background-color: ${palette.boxSubColor};
     }
@@ -20,5 +29,10 @@ export const tokenListContainer = css`
     .tokenName {
       color: ${palette.fontPaleColor};
     }
+  }
+  .target {
+    height: 10px;
+    margin-bottom: 50px;
+    bottom: 0;
   }
 `;

@@ -13,6 +13,6 @@ export const modalFooterContainer = css`
   border-radius: 10px;
   cursor: pointer;
 
-  position: absolute;
-  bottom: 0;
+  /* position: absolute; */
+  bottom: -1px;
 `;

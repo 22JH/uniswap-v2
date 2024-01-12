@@ -18,4 +18,6 @@ export const selectTokenModalContainer = css`
   background-color: ${palette.backgroundColor};
   border: 1px solid ${palette.boxSubColor};
   border-radius: 10px;
+
+  padding-bottom: 50px;
 `;

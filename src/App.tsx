@@ -6,8 +6,6 @@ import { palette } from "./theme/palette";
 
 import { useState } from "react";
 import { ValueType } from "types/Value.type";
-import { useQuery } from "react-query";
-import { getTokenPrice } from "./api/getTokenPrice";
 import TokenInput from "./components/home/TokenInput/TokenInput";
 import TokenToOtherToken from "./components/home/TokenToOtherToken/TokenToOtherToken";
 import SwapButton from "./components/home/SwapButton/SwapButton";
@@ -24,8 +22,10 @@ const uniswapContainer = css`
   background-color: ${palette.backgroundColor};
   display: flex;
   flex-direction: column;
-  width: 500px;
-  height: 500px;
+  width: 50vw;
+  max-width: 500px;
+  min-width: 300px;
+  height: 60dvh;
 `;
 
 const App = () => {
@@ -43,32 +43,10 @@ const App = () => {
     perDollar: 0,
   });
 
-  useQuery(["price", inputValue.tokenId], getTokenPrice, {
-    onSuccess: (data) => {
-      const _price = data[inputValue.tokenId].usd;
-      setInputValue((prev) => ({ ...prev, perDollar: _price }));
-    },
-    staleTime: 1000 * 60 * 60,
-    cacheTime: 1000 * 60 * 60 * 24,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-
-  useQuery(["price", outputValue.tokenId], getTokenPrice, {
-    onSuccess: (data) => {
-      const _price = data[outputValue.tokenId].usd;
-      setOutputValue((prev) => ({ ...prev, perDollar: _price }));
-    },
-    staleTime: 1000 * 60 * 60,
-    cacheTime: 1000 * 60 * 60 * 24,
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
   return (
     <div css={uniswapContainer}>
       <Global styles={globalStyle} />
       <Header />
-      <div></div>
       <TokenInput
         value={inputValue}
         setValue={setInputValue}

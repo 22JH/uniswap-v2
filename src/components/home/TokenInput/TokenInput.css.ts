@@ -19,6 +19,7 @@ export const TokenInputContainer = css`
       color: ${palette.fontColor};
       border-color: transparent;
       font-size: 32px;
+      width: 100%;
     }
     input:focus {
       border-color: transparent;
